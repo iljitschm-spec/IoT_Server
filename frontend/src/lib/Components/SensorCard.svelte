@@ -1,40 +1,49 @@
 <script lang="ts">
-    let {sensorName, values, type, onclick, online} = $props();
+    let {sensorName, values, type, onclick, online, active} = $props();
 </script>
 
 
 <li>
-    <button type="button" onclick={onclick} class="card">
+    <div onclick={onclick} class="card {active === true ? 'active' : ''}">
         <div class="card-body">
             <h3 class={online ===false ? 'offline' : 'online'} >
                 {sensorName}
             </h3>
             <p>{type}: {values[values.length - 1]}</p>
         </div>
-    </button>
+    </div>
 </li>
 
 <style>
+    li {
+        display: flex;
+        flex-direction: column;
+        width: 200px;
+        flex-grow: 1;
+        min-height: 100px;
+    }
+
     .card {
-        appearance: none;
+        box-sizing: border-box;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        width: 100%;
+        text-align: center;
+        cursor: pointer;
+        flex-grow: 1;
+
+        color: var(--text-primary);
         background-color: var(--cards);
         border: 1px solid var(--border);
         border-radius: 1rem;
-        width: 200px;
-        text-align: center;
-        cursor: pointer;
-        color: var(--text-primary);
     }
 
-    .card:focus-visible {
-        outline: 2px solid Highlight;
-        outline-offset: 2px;
+    .active {
+        border: 1px solid var(--accent);
     }
-    
+
     .offline {
         color: var(--red)
     }

@@ -2,13 +2,13 @@
     import SensorCard from "$lib/Components/SensorCard.svelte";
     import SensorInformation from "./SensorInformation.svelte";
 
-
+    //data muss in ein Array aus Objects umgewandelt werden [{"timestamp":"zeit","value":data}]
     let sensor_list = [
-        {"name": "Sensor 1", "type": "Temperature", "data": [20, 21, 22, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20], "online": true},
-        {"name": "Sensor 2", "type": "Temperature", "data": [20, 24, 23], "online": true},
-        {"name": "Sensor 3", "type": "Humidity", "data": [50, 55, 53], "online": false},
-        {"name": "Sensor 4", "type": "Humidity", "data": [50, 49, 47], "online": true},
-        {"name": "Sensor 5", "type": "Humidity", "data": [50, 51, 52], "online": true},
+        {"id": 1, "name": "Sensor 1", "type": "Temperature", "data": [20, 21, 22, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20], "online": true},
+        {"id": 2, "name": "Sensor 2", "type": "Temperature", "data": [20, 24, 23], "online": true},
+        {"id": 3, "name": "Sensor 3", "type": "Humidity", "data": [50, 55, 53], "online": false},
+        {"id": 4, "name": "Sensor 4", "type": "Humidity", "data": [50, 49, 47], "online": true},
+        {"id": 5, "name": "Sensor 5", "type": "Humidity", "data": [50, 51, 52], "online": true}
     ]
 
     let usedSensor = $state(sensor_list[0]);
@@ -25,7 +25,9 @@
                         values={sensor.data} 
                         type={sensor.type} 
                         onclick={() => handleCardClick(sensor)} 
-                        online={sensor.online} />
+                        online={sensor.online}
+                        active={sensor.id === usedSensor.id}
+            />
         {/each}
     </ul>
     <div class="content">
@@ -43,6 +45,7 @@
         gap: 1.5rem;
         width: 100%;
         margin: 0 auto;
+        height: 80vh;
     }
 
     .content{
@@ -61,8 +64,30 @@
         padding: 0;
         display: flex;
         flex-direction: column;
-        flex-wrap: wrap;
-        justify-content: center; 
-        gap: 1.5rem;
+        align-items: center;
+        gap: 1rem;
+        height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: var(--border) transparent;
+        ::-webkit-scrollbar{
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track{
+            background: transparent;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb{
+            background-color: var(--border);
+            border-radius: 4px;
+        }
+        ::webkit-scrollbar-thumb:active{
+            background-color: var(--accent);
+        }
     }
 </style>

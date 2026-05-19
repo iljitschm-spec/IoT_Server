@@ -54,15 +54,14 @@
         padding: 0.5rem;
         text-align: center;
         border: 1px solid var(--border);
-        border-radius: 0.5rem;
         border-collapse: collapse;
     }
     th {
         position: sticky;
         top: 0;
-        background-color: var(--cards);
         z-index: 1;
         font-weight: bold;
+        background-color: var(--accent);
     }
     * {
         scrollbar-width: thin;
