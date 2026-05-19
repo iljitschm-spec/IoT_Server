@@ -7,7 +7,7 @@
 	let showLogIn: boolean = $state(false);
 </script>
 
-<main>
+<div class="main">
 	<Header bind:loggedIn bind:showLogIn />
 	<br>
 	<div class="container">
@@ -19,11 +19,11 @@
 			</div>
 		{/if}
 	</div>
-</main>
+</div>
 
 <style>
-	main {
-		margin: 0;
+	.main {
+		margin: 0 auto;
 		box-sizing: border-box;
 		padding: 1rem;
 		color: var(--text-primary);
@@ -33,8 +33,6 @@
 		display: flex;
 		flex-direction: column;
 		flex-wrap: wrap;
-		min-height: 75vh;
-		max-height: 80vh;
 
 	}
 

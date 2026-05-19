@@ -12,6 +12,8 @@
         --click: #7DD3FC;
 
         --border: #334155;
+        --red: #EF4444;
+        --green: #10B981;
         font-family: "Roboto", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     }
 </style>

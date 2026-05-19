@@ -1,24 +1,35 @@
-<script>
+<script lang="ts">
     import SensorCard from "$lib/Components/SensorCard.svelte";
+    import SensorInformation from "./SensorInformation.svelte";
 
 
     let sensor_list = [
-        {"name": "Sensor 1", "data": {"Temp": 20}},
-        {"name": "Sensor 2", "data": {"Temp": 20}},
-        {"name": "Sensor 3", "data": {"Humid": 50}},
-        {"name": "Sensor 4", "data": {"Humid": 50}},
-        {"name": "Sensor 5", "data": {"Humid": 50}},
+        {"name": "Sensor 1", "type": "Temperature", "data": [20, 21, 22, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20], "online": true},
+        {"name": "Sensor 2", "type": "Temperature", "data": [20, 24, 23], "online": true},
+        {"name": "Sensor 3", "type": "Humidity", "data": [50, 55, 53], "online": false},
+        {"name": "Sensor 4", "type": "Humidity", "data": [50, 49, 47], "online": true},
+        {"name": "Sensor 5", "type": "Humidity", "data": [50, 51, 52], "online": true},
     ]
+
+    let usedSensor = $state(sensor_list[0]);
+
+    function handleCardClick(sensor: any) {
+        usedSensor = sensor;
+    }
 </script>
 
 <div class="content-wrapper">
     <ul class="sensor-list">
         {#each sensor_list as sensor }
-            <SensorCard sensor={sensor.name} values={sensor.data} />
+            <SensorCard sensorName={sensor.name} 
+                        values={sensor.data} 
+                        type={sensor.type} 
+                        onclick={() => handleCardClick(sensor)} 
+                        online={sensor.online} />
         {/each}
     </ul>
     <div class="content">
-        asdf
+        <SensorInformation activeSensor={usedSensor} />
     </div>
 
 </div>
@@ -37,13 +48,11 @@
     .content{
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
         background-color: var(--cards);
         border: 1px solid var(--border);
         border-radius: 1rem;
-        text-align: center;
         flex-grow: 1;
+        padding: 1rem;
     }
 
     .sensor-list {
