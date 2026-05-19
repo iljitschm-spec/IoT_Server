@@ -4,7 +4,11 @@
 </script>
 <div class="content-wrapper">
     <h2>{activeSensor.name}</h2>
-    <p>Status: <span style="color: {activeSensor.online === true ? 'var(--green)' : 'var(--red)'}">{activeSensor.online === true ? 'Online' : 'Offline'}</span></p>
+    <p>Status: 
+        <span style="color: {activeSensor.online === true ? 'var(--green)' : 'var(--red)'}">
+            {activeSensor.online === true ? 'Online' : 'Offline'}
+        </span>
+    </p>
     <br>
     <div class="table-container">
         <table>
