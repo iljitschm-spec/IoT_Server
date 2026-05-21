@@ -1,7 +1,10 @@
 <script lang="ts">
     import SensorCard from "$lib/Components/SensorCard.svelte";
     import SensorInformation from "./SensorInformation.svelte";
+    import { connectMqtt, disconnectMqtt, mqttData } from "../mqttService.svelte.ts";
+    import {onMount, onDestroy} from "svelte";
 
+    let sensors = $derived(Object.values(mqttData.sensors));
     //data muss in ein Array aus Objects umgewandelt werden [{"timestamp":"zeit","value":data}]
     let sensor_list = [
         {"id": 1, "name": "Sensor 1", "type": "Temperature", "data": [20, 21, 22, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20], "online": true},
@@ -11,11 +14,27 @@
         {"id": 5, "name": "Sensor 5", "type": "Humidity", "data": [50, 51, 52], "online": true}
     ]
 
-    let usedSensor = $state(sensor_list[0]);
+    let usedSensor = $state(sensor_list[0]); //$derived(sensor_list.find(sensor => sensor.id === selectedId) || sensor_list[0])
 
     function handleCardClick(sensor: any) {
         usedSensor = sensor;
     }
+    /*
+    $effect(() => {
+        if (!selectedId && sensor_list.length > 0) {
+            selectedId = sensor_list[0].id;
+        }
+    });
+    */
+    onMount(() => {
+        connectMqtt("ws://localhost:9001", "sensors/#");
+        console.log("Connected");
+    })
+
+    onDestroy(() => {
+        disconnectMqtt();
+        console.log("Disconnected");
+    })
 </script>
 
 <div class="content-wrapper">
