@@ -1,12 +1,20 @@
 <script lang="ts">
+    import { publishCommand } from "../mqttService.svelte.ts";
+
     let { activeSensor } = $props();
-    let time: number = $state(11)
+
+    function toggleSensor() {
+        publishCommand(activeSensor.id, !activeSensor.online);
+    }
 </script>
 <div class="content-wrapper">
     <h2>
         {activeSensor.name}
         <span style="color: {activeSensor.online === true ? 'var(--green)' : 'var(--red)'}">●</span>
     </h2>
+    <button class="toggle-btn" onclick={toggleSensor}>
+        {activeSensor.online ? 'Ausschalten' : 'Einschalten'}
+    </button>
     <p>Status: 
         <span style="color: {activeSensor.online === true ? 'var(--green)' : 'var(--red)'}">
             {activeSensor.online === true ? 'Online' : 'Offline'}
@@ -22,7 +30,7 @@
             </tr>
             {#each activeSensor.data as value}
                 <tr>
-                    <td>{time.toString()+':00'}</td>
+                    <td>11:00</td>
                     <td>{value}{activeSensor.type === 'Temperature' ? '°C' : '%'}</td>
                 </tr>
             {/each}
@@ -81,5 +89,18 @@
         ::webkit-scrollbar-thumb:active{
             background-color: var(--accent);        
         }
+    }
+    .toggle-btn {
+        padding: 0.5rem 1rem;
+        background-color: var(--cards);
+        border: 1px solid var(--border);
+        color: inherit;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .toggle-btn:hover {
+        background-color: var(--accent);
     }
 </style>

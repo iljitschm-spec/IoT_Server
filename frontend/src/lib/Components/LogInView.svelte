@@ -3,6 +3,7 @@
 
     let { loggedIn = $bindable(), showLogIn = $bindable() } = $props();
 
+    let userIsLoggingIn: boolean = $state(true);
     let dialog: HTMLDialogElement;
     let username = $state("");
     let password = $state("");
@@ -18,18 +19,33 @@
     function handleSubmit(e?: Event) {
         if (e) e.preventDefault(); // Verhindert das Neuladen der Seite
 
-        loggedIn = true;
+        if (userIsLoggingIn) {
+            //einloggen
+            loggedIn = true;
+        } else {
+            //registrieren
+        }
+
         showLogIn = false;
+        userIsLoggingIn = true;
     }
 
     function closeDialog() {
         showLogIn = false;
     }
+
+    function toggleMode() {
+        userIsLoggingIn = !userIsLoggingIn;
+    }
 </script>
 
 <p>Sie sind noch nicht eingeloggt!</p>
 
-<dialog bind:this={dialog} onclose={closeDialog} onclick={(e) => { if (e.target === dialog) dialog.close(); }}>
+<dialog
+        bind:this={dialog}
+        onclose={closeDialog}
+        onclick={(e) => { if (e.target === dialog) dialog.close(); }}
+>
     <form onsubmit={handleSubmit}>
         <p>Username:</p>
         <input type="text" name="username" bind:value={username} />
@@ -37,10 +53,20 @@
         <p>Password:</p>
         <input type="password" name="password" bind:value={password} />
         <br>
+
         <div class="logInButton">
-            <Button name="Log In" onclick_function={handleSubmit} />
+            <Button
+                    name={userIsLoggingIn ? "Log In" : "Registrieren"}
+                    onclick_function={handleSubmit}
+            />
             <Button name="Schließen" onclick_function={closeDialog} />
         </div>
+
+        <!-- svelte-ignore a11y_click_events_have_key_events -->
+        <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+        <p class="toggle-text" onclick={toggleMode}>
+            {userIsLoggingIn ? "Noch kein Account? Registrieren" : "Bereits einen Account? Einloggen"}
+        </p>
     </form>
 </dialog>
 
@@ -74,5 +100,14 @@
 
     dialog::backdrop {
         background: rgba(0, 0, 0, 0.6);
+    }
+
+    .toggle-text {
+        color: var(--accent);
+        cursor: pointer;
+    }
+
+    .toggle-text:hover {
+        text-decoration: underline;
     }
 </style>
