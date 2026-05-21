@@ -37,5 +37,22 @@ services:
       - ./frontend:/app          # Hot-Reload beim Entwickeln
       - /app/node_modules        # node_modules im Container behalten
 
+  mosquitto:
+    image: eclipse-mosquitto:2.0.22
+    container_name: mqtt_broker
+    restart: unless-stopped
+    ports:
+      - "1883:1883"   # TCP
+      - "9001:9001"   # WebSocket
+    volumes:
+      - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    healthcheck:
+      test: ["CMD", "mosquitto_pub", "-h", "localhost", "-t", "health", "-m", "ping", "-q", "0"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
 volumes:
   db-data:
