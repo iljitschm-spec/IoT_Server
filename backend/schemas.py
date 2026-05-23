@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from datetime import datetime
 
 
 # --- Auth-Schemas ---
@@ -32,3 +33,27 @@ class Token(BaseModel):
 #     name: str
 #     price: int
 #     model_config = {"from_attributes": True}
+
+class SensorCreate(BaseModel):
+    name: str
+    type: str
+
+class SensorResponse(BaseModel):
+    id: int
+    name: str
+    type: str
+
+    model_config = {"from_attributes": True}
+
+
+class SensorValueCreate(BaseModel):
+    value: float
+
+
+class SensorValueResponse(BaseModel):
+    id: int
+    value: float
+    timestamp: datetime
+
+    model_config = {"from_attributes": True}
+
