@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException, status, Body
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -13,8 +13,8 @@ from auth import (
     verify_password,
 )
 from database import Base, engine, get_db
-from models import User
-from schemas import Token, UserRegister, UserResponse
+import models
+from schemas import Token, UserRegister, UserResponse, SensorCreate, SensorResponse, SensorValueCreate, SensorValueResponse
 
 # Tabellen anlegen (falls noch nicht vorhanden)
 Base.metadata.create_all(bind=engine)
@@ -91,3 +91,39 @@ def get_profile(
 #     db.commit()
 #     db.refresh(item)
 #     return item
+
+
+
+@app.get("/sensors", response_model=list[SensorResponse])
+def get_sensors(db: Session = Depends(get_db)):
+    return db.query(models.Sensor).all()
+
+
+
+@app.post("/sensors", response_model=SensorResponse)
+def create_sensor(data: SensorCreate, db: Session = Depends(get_db)):
+    sensor = models.Sensor(**data.dict())
+    db.add(sensor)
+    db.commit()
+    db.refresh(sensor)
+    return sensor
+
+@app.post("/sensor/{sensor_id}/values", response_model=SensorValueResponse)
+def create_sensor_value(sensor_id: int, data: SensorValueCreate, db: Session = Depends(get_db)):
+    value = models.SensorValue(
+        sensor_id=sensor_id,
+        value=data.value
+    )
+    db.add(value)
+    db.commit()
+    db.refresh(value)
+    return value
+
+@app.get("/sensor/{sensor_id}/values", response_model=list[SensorValueResponse])
+def get_sensor_values(sensor_id: int, db: Session = Depends(get_db)):
+    return db.query(models.SensorValue)\
+             .filter(models.SensorValue.sensor_id == sensor_id)\
+             .all()
+
+
+
