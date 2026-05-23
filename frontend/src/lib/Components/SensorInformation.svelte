@@ -1,12 +1,12 @@
 <script lang="ts">
     import { publishCommand } from "../mqttService.svelte.ts";
-
+    import SensorChart from "./SensorChart.svelte";
     let { activeSensor } = $props();
-
     function toggleSensor() {
         publishCommand(activeSensor.id, !activeSensor.online);
     }
 </script>
+
 <div class="content-wrapper">
     <h2>
         {activeSensor.name}
@@ -21,21 +21,8 @@
         </span>
     </p>
     <br>
-    <div class="table-container">
-        <table>
-            <tbody>
-            <tr>
-                <th>Zeit</th>
-                <th>Wert</th>
-            </tr>
-            {#each activeSensor.data as value}
-                <tr>
-                    <td>11:00</td>
-                    <td>{value}{activeSensor.type === 'Temperature' ? '°C' : '%'}</td>
-                </tr>
-            {/each}
-            </tbody>
-        </table>
+    <div class="chart-wrapper">
+        <SensorChart {activeSensor} />
     </div>
 </div>
 
@@ -44,51 +31,12 @@
         display: flex;
         flex-direction: column;
         height: 100%;
-        max-height: 450px;
     }
-    .table-container {
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        overflow-y: auto;
-    }
-    table {
-        width: 50%;
-        border: 1px solid var(--border);
-        border-radius: 0.5rem;
-        border-collapse: collapse;
-    }
-    th, td {
-        padding: 0.5rem;
-        text-align: center;
-        border: 1px solid var(--border);
-        border-collapse: collapse;
-    }
-    th {
-        position: sticky;
-        top: 0;
-        z-index: 1;
-        font-weight: bold;
-        background-color: var(--accent);
-    }
-    * {
-        scrollbar-width: thin;
-        scrollbar-color: var(--border) transparent;
-        ::-webkit-scrollbar{
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track{
-            background: transparent;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb{
-            background-color: var(--border);
-            border-radius: 4px;
-        }
-        ::webkit-scrollbar-thumb:active{
-            background-color: var(--accent);        
-        }
+    .chart-wrapper {
+        flex-grow: 1;
+        min-height: 300px;
+        width: 100%;
+        padding: 1rem 0;
     }
     .toggle-btn {
         padding: 0.5rem 1rem;
@@ -98,8 +46,8 @@
         border-radius: 0.5rem;
         cursor: pointer;
         transition: background-color 0.2s;
+        width: fit-content;
     }
-
     .toggle-btn:hover {
         background-color: var(--accent);
     }
