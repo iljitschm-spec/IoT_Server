@@ -8,3 +8,5 @@ node_modules/
 build/
 dist/
 *.local
+mosquitto/data/
+mosquitto/log/
