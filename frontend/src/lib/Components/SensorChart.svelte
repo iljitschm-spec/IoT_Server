@@ -28,7 +28,7 @@
     });
 
     $effect(() => {
-    console.log('Sensor wurde gewechselt zu:', activeSensor.name);
+    //console.log('Sensor wurde gewechselt zu:', activeSensor.name);
     
     if (!chartInstance) return;  // wenn der char noch nicht erstellt
     

@@ -21,6 +21,17 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Mein Projekt", version="0.1.0")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173"
+    ], # Erlaubt deinem Svelte-Frontend den Zugriff
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # ---------------------------------------------------------------------------
 # Health Check
 # ---------------------------------------------------------------------------
