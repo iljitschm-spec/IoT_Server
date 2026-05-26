@@ -1,5 +1,6 @@
 <script lang="ts">
     import Button from "$lib/Components/Button.svelte";
+    import { login, register } from "$lib/api";
 
     let { loggedIn = $bindable(), showLogIn = $bindable() } = $props();
 
@@ -7,53 +8,89 @@
     let dialog: HTMLDialogElement;
     let username = $state("");
     let password = $state("");
+    let email = $state("");
+
+    let isLoading = $state(false);
 
     $effect(() => {
         if (showLogIn && dialog && !dialog.open) {
+            if (!isLoading) {
+                username = "";
+                password = "";
+            }
             dialog.showModal();
         } else if (!showLogIn && dialog && dialog.open) {
             dialog.close();
         }
     });
 
-    function handleSubmit(e?: Event) {
-        if (e) e.preventDefault(); // Verhindert das Neuladen der Seite
+    async function handleSubmit(e?: Event) {
+        if (e) e.preventDefault();
+
+        isLoading = true;
 
         if (userIsLoggingIn) {
-            //einloggen
-            loggedIn = true;
+            // --- LOGIN ---
+            try {
+                await login(username, password);
+                loggedIn = true;
+                showLogIn = false;
+                userIsLoggingIn = true;
+            } catch (error: any) {
+                alert(error.message || "Login fehlgeschlagen. Bitte überprüfe deine Daten.");
+            } finally {
+                isLoading = false;
+            }
         } else {
-            //registrieren
-        }
+            // --- REGISTRIEREN ---
+            try {
+                await register(username, email, password);
+                await login(username, password);
 
-        showLogIn = false;
-        userIsLoggingIn = true;
+                loggedIn = true;
+                showLogIn = false;
+                userIsLoggingIn = true;
+
+            } catch (error: any) {
+                alert(error.message || "Registrierung fehlgeschlagen. Möglicherweise ist der Benutzername bereits vergeben.");
+            } finally {
+                isLoading = false;
+            }
+        }
     }
 
     function closeDialog() {
-        showLogIn = false;
+        if (!isLoading) {
+            showLogIn = false;
+        }
     }
 
     function toggleMode() {
         userIsLoggingIn = !userIsLoggingIn;
     }
+
 </script>
 
-<p>Sie sind noch nicht eingeloggt!</p>
+{#if !loggedIn}
+    <p>Sie sind noch nicht eingeloggt!</p>
+{/if}
 
 <dialog
         bind:this={dialog}
         onclose={closeDialog}
-        onclick={(e) => { if (e.target === dialog) dialog.close(); }}
+        onclick={(e) => { if (e.target === dialog && !isLoading) dialog.close(); }}
 >
     <form onsubmit={handleSubmit}>
-        <p>Username:</p>
-        <input type="text" name="username" bind:value={username} />
 
-        <p>Password:</p>
-        <input type="password" name="password" bind:value={password} />
+        <label for="username">Benutzername:</label>
+        <input type="text" id="username" name="username" bind:value={username} />
+        {#if !userIsLoggingIn}
+            <label for="email">E-Mail:</label>
+            <input type="email" id="email" name="email" bind:value={email} disabled={isLoading} required />
+        {/if}
+        <label for="password">Passwort:</label>
+        <input type="password" id="password" name="password" bind:value={password} />
         <br>
-
         <div class="logInButton">
             <Button
                     name={userIsLoggingIn ? "Log In" : "Registrieren"}
@@ -61,12 +98,9 @@
             />
             <Button name="Schließen" onclick_function={closeDialog} />
         </div>
-
-        <!-- svelte-ignore a11y_click_events_have_key_events -->
-        <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-        <p class="toggle-text" onclick={toggleMode}>
+        <button class="toggle-text" onclick={toggleMode}>
             {userIsLoggingIn ? "Noch kein Account? Registrieren" : "Bereits einen Account? Einloggen"}
-        </p>
+        </button>
     </form>
 </dialog>
 
@@ -77,6 +111,10 @@
         align-items: center;
         justify-content: space-between;
         gap: 0.5rem;
+    }
+
+    label {
+        margin-top: 0.2rem;
     }
 
     input {
@@ -96,6 +134,7 @@
         border: 1px solid var(--border);
         border-radius: 1rem;
         color: var(--text-primary);
+        transition: 0.5s;
     }
 
     dialog::backdrop {
@@ -105,6 +144,9 @@
     .toggle-text {
         color: var(--accent);
         cursor: pointer;
+        margin-top: 0.5rem;
+        background: none;
+        border: none;
     }
 
     .toggle-text:hover {

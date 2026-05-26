@@ -1,5 +1,6 @@
 <script lang="ts">
     import Button from "$lib/Components/Button.svelte";
+    import {logout} from "$lib/api";
 
     let { loggedIn = $bindable(), showLogIn = $bindable() } = $props();
 
@@ -8,6 +9,7 @@
     function handleHeaderClick() {
         if (loggedIn) {
             loggedIn = false;
+            logout();
         } else {
             showLogIn = true;
         }
