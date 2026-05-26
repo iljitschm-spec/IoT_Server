@@ -5,7 +5,7 @@ import paho.mqtt.client as mqtt
 from datetime import datetime
 
 client = mqtt.Client()
-client.connect("localhost", 1883)
+client.connect("localhost", 9001)
 
 sensors = [
     {"id": "sensor-1", "type": "temperature", "value": 22, "step": 0.3, "min": 18, "max": 28},

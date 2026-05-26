@@ -7,8 +7,8 @@ from models import Sensor, SensorValue
 import os
 
 MQTT_HOST = os.getenv("MQTT_HOST", "mosquitto")
-MQTT_PORT = int(os.getenv("MQTT_PORT", "1883"))
-TOPIC     = "sensors/#"   # subscribes to everything under sensors/
+MQTT_PORT = int(os.getenv("MQTT_PORT", 1883))
+TOPIC     = "sensors/#"  
 
 
 def on_connect(client, userdata, flags, rc):
@@ -17,14 +17,9 @@ def on_connect(client, userdata, flags, rc):
 
 
 def on_message(client, userdata, msg):
-    # Expected topic format: sensors/{sensor_id}
-    # Expected payload:      {"type" : "humidity", "value": 22.4}
 
-    topic = msg.topic                        # e.g. "sensors/1"
+    topic = msg.topic                       
     parts = topic.split("/")
-
-    if len(parts) != 2:
-        return
 
     sensor_id_str = parts[1]
 
@@ -37,14 +32,15 @@ def on_message(client, userdata, msg):
     try:
         payload = json.loads(msg.payload.decode("utf-8"))
         value = float(payload["value"])
+        timestamp = datetime.fromisoformat(payload["timestamp"])
     except (json.JSONDecodeError, KeyError, ValueError) as e:
         print(f"[MQTT] Bad payload on {topic}: {e}")
         return
 
-    # Write to database
+
     db = SessionLocal()
     try:
-        # Create sensor if it does not exist yet
+
         sensor = db.query(Sensor).filter(Sensor.id == sensor_id).first()
         if not sensor:
             sensor = Sensor(id=sensor_id, name=f"Sensor {sensor_id}", type="unknown")
@@ -54,7 +50,7 @@ def on_message(client, userdata, msg):
         db.add(SensorValue(
             sensor_id=sensor_id,
             value=value,
-            timestamp=datetime.now(),
+            timestamp=timestamp,
         ))
         db.commit()
         print(f"[DB] Saved: sensor {sensor_id} → {value}")
@@ -71,7 +67,5 @@ def start_mqtt():
     client.on_connect = on_connect
     client.on_message = on_message
     client.connect(MQTT_HOST, MQTT_PORT)
-    client.loop_start()   # runs in background thread
+    client.loop_start()  
     return client
-
-
