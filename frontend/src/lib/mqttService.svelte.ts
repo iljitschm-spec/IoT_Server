@@ -55,7 +55,7 @@ export function publishCommand(sensorId: string, turnOn: boolean) {
     if (client?.connected) {
         // true = online, false = offline
         console.log(sensorId);
-        client.publish(`commands/${sensorId}/status`, turnOn ? "true" : "false");
+        client.publish(`commands/${sensorId}/status`, turnOn ? "active" : "inactive");
     }
 }
 
