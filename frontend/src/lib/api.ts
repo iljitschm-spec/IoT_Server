@@ -26,12 +26,35 @@ export function isLoggedIn(): boolean {
  * Sendet username + password als Formular-Daten (nicht JSON!) an POST /token.
  * Speichert den erhaltenen access_token im localStorage.
  */
-export async function login(username: string, password: string): Promise<void> {
-	// TODO: Implementiert diese Funktion
-	// Hinweis: URLSearchParams für Form-Daten verwenden
-	//          Content-Type: 'application/x-www-form-urlencoded'
-	//          Bei Erfolg: saveToken(data.access_token) aufrufen
-	throw new Error('TODO: login() implementieren');
+export async function login(username: string, password: string) {
+	const formData = new URLSearchParams();
+	formData.append('username', username);
+	formData.append('password', password);
+
+	let res: Response;
+
+	try {
+		res = await fetch(`${API_BASE}/token`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			body: formData
+		});
+	} catch (error) {
+		throw new Error("Netzwerkfehler: Der Server ist nicht erreichbar.");
+	}
+
+	if (!res.ok) {
+		if (res.status === 401 || res.status === 422) {
+			throw new Error("Benutzername oder Passwort ist falsch.");
+		}  else if (res.status >= 500) {
+			throw new Error(`Serverfehler (${res.status}): Bitte versuche es später erneut.`);
+		} else {
+			throw new Error(`Ein unerwarteter Fehler ist aufgetreten (Fehlercode: ${res.status}).`);
+		}
+	}
+
+	const data = await res.json();
+	saveToken(data.access_token);
 }
 
 /**
@@ -39,35 +62,78 @@ export async function login(username: string, password: string): Promise<void> {
  * Hängt den Bearer-Token aus dem localStorage als Authorization-Header an.
  */
 export async function fetchProtected<T>(path: string): Promise<T> {
-	// TODO: Implementiert diese Funktion
-	// Hinweis: getToken() für den Token, Authorization: `Bearer ${token}` als Header
-	//          Bei 401: logout() aufrufen und Fehler werfen
-	throw new Error('TODO: fetchProtected() implementieren');
+	const token = getToken();
+
+	if (!token) {
+		logout();
+		throw new Error('Nicht authentifiziert. Kein Token gefunden.');
+	}
+
+	const res = await fetch(`${API_BASE}${path}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `Bearer ${token}`,
+			'Content-Type': 'application/json'
+		}
+	});
+
+	if (res.status === 401) {
+		logout();
+		throw new Error('Sitzung abgelaufen oder ungültig. Bitte logge dich erneut ein.');
+	}
+
+	if (!res.ok) {
+		throw new Error(`HTTP Fehler: ${res.status}`);
+	}
+
+	return (await res.json()) as T;
 }
 
 /**
  * Führt einen nicht authentifizierten GET-Request aus.
  */
 export async function fetchPublic<T>(path: string): Promise<T> {
-	// TODO: Implementiert diese Funktion
-	throw new Error('TODO: fetchPublic() implementieren');
+	const res = await fetch(`${API_BASE}${path}`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	});
+
+	if (!res.ok) {
+		throw new Error(`HTTP Fehler: ${res.status}`);
+	}
+
+	return (await res.json()) as T;
 }
 
-// TODO: Ergänzt hier eigene API-Funktionen, z. B.:
-// export async function getItems() {
-//   return fetchPublic<Item[]>('/items');
-// }
-//
-// export async function createItem(data: { name: string; price: number }) {
-//   const token = getToken();
-//   const res = await fetch(`${API_BASE}/items`, {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//       'Authorization': `Bearer ${token}`
-//     },
-//     body: JSON.stringify(data)
-//   });
-//   if (!res.ok) throw new Error('Erstellen fehlgeschlagen');
-//   return res.json();
-// }
+export async function register(username: string, email: string, password: string): Promise<void> {
+	let res: Response;
+
+	try {
+		res = await fetch(`${API_BASE}/auth/register`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ username, email, password })
+		});
+	} catch (error) {
+		throw new Error("Netzwerkfehler: Der Server ist nicht erreichbar.");
+	}
+
+	if (!res.ok) {
+		if (res.status === 400 || res.status === 409) {
+			const errorData = await res.json().catch(() => null);
+
+			// Reagiert direkt auf die "User existiert bereits" Meldung aus deiner main.py
+			if (errorData?.detail?.includes("existiert bereits")) {
+				throw new Error("Dieser Benutzername oder diese E-Mail ist leider schon vergeben.");
+			}
+
+			throw new Error(errorData?.detail || "Registrierung fehlgeschlagen. Überprüfe deine Eingaben.");
+		} else if (res.status >= 500) {
+			throw new Error(`Serverfehler (${res.status}): Die Registrierung ist derzeit nicht möglich.`);
+		} else {
+			throw new Error(`Ein unerwarteter Fehler ist aufgetreten (Code: ${res.status}).`);
+		}
+	}
+}

@@ -1,15 +1,14 @@
 <script>
     let { name, onclick_function} = $props();
 </script>
-
-    <!-- svelte-ignore a11y_click_events_have_key_events -->
-    <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-    <div onclick={onclick_function}>
+    <button onclick={onclick_function}>
         {name}
-    </div>
+    </button>
 
 <style>
-    div {
+    button {
+        color: var(--color-text);
+        font-weight: bold;
         display: inline-block;
         text-align: center;
         border: 1px var(--border) solid;
@@ -20,10 +19,10 @@
         -moz-user-select: none;
         -ms-user-select: none;
     }
-    div:hover {
+    button:hover {
         background-color: var(--hover);
     }
-    div:active {
+    button:active {
         background-color: var(--hover);
     }
 
