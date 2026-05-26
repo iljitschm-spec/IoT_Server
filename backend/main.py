@@ -4,7 +4,8 @@ from fastapi import Depends, FastAPI, HTTPException, status, Body
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-
+from router_historic import router as historic_router
+from mqtt_subscriber import start_mqtt
 from auth import (
     DUMMY_HASH,
     create_access_token,
@@ -20,7 +21,11 @@ from schemas import Token, UserRegister, UserResponse, SensorCreate, SensorRespo
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Mein Projekt", version="0.1.0")
+app.include_router(historic_router)
 
+async def lifespan(app: FastAPI):
+    start_mqtt()
+    yield
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -167,3 +172,6 @@ def get_sensor_values(sensor_id: int, db: Session = Depends(get_db)):
 
 
 
+@app.post("/sensor/{sensor_id}/status?{}")
+def change_stauts():
+    pass
