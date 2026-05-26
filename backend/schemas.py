@@ -1,6 +1,6 @@
-from pydantic import BaseModel
 from datetime import datetime
-
+from pydantic import BaseModel
+from typing import Literal
 
 # --- Auth-Schemas ---
 
@@ -56,4 +56,18 @@ class SensorValueResponse(BaseModel):
     timestamp: datetime
 
     model_config = {"from_attributes": True}
+
+
+class DataPoint(BaseModel):
+    time: datetime
+    avg: float
+    min: float
+    max: float
+
+
+class SensorHistoricResponse(BaseModel):
+    sensor_id: int
+    sensor_name: str
+    range: Literal["day", "month", "year"]
+    data: list[DataPoint]
 
