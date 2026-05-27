@@ -1,3 +1,4 @@
+import os
 import time
 import random
 import json
@@ -12,7 +13,9 @@ sensors = {
     "5": {"id": "5", "name": "Sensor 5", "type": "humidity",    "value": 45, "step": 1.0, "min": 30, "max": 70, "active": True}
 }
 
-TOPIC = "commands/+/status" 
+TOPIC = "commands/+/status"
+MQTT_HOST = os.getenv("MQTT_HOST", "localhost")
+MQTT_PORT = int(os.getenv("MQTT_PORT", "1883"))
 
 def on_connect(client, userdata, flags, rc):
     print(f"[MQTT] Connected (rc={rc})")
@@ -36,30 +39,38 @@ def on_message(client, userdata, msg):
     
     sensors[sensor_id]["active"] = active
     print(f"-> Sensor {sensor_id} ist jetzt {'aktiv' if active else 'inaktiv'}")
-    
-    client.publish(f"sensors/{sensor_id}/status", "online" if active else "offline")
+
+    client.publish(f"sensors/{sensor_id}/status", "online" if active else "offline", retain=True)
 
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
 
-client.connect("localhost", 1883)
+client.connect(MQTT_HOST, MQTT_PORT)
 client.loop_start()
 
 for s in sensors.values():
-    client.publish(f"sensors/{s['id']}/status", "online")
+    is_online = "online" if s["active"] else "offline"
+    client.publish(f"sensors/{s['id']}/status", is_online, retain=True)
 
 print("Simulator läuft.")
 
 while True:
     for sensor_id, v in sensors.items():
         if not v["active"]:
+            payload = payload = json.dumps({
+                "name": v["name"],
+                "value": None,
+                "timestamp": None
+            })
+            client.publish(f"sensors/{v['id']}/{v['type']}", payload)
             continue
         
         v["value"] += random.uniform(-v["step"], v["step"])
         v["value"] = max(v["min"], min(v["max"], v["value"]))
         
         payload = json.dumps({
+            "name": v["name"],
             "value": round(v["value"], 1),
             "timestamp": datetime.now().isoformat()
         })
