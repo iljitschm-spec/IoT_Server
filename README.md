@@ -27,26 +27,69 @@ docker compose up -d --build
 
 ## Projektstruktur
 
-```
+
+├── backend/                 # FastAPI Backend (Logik + DB + MQTT)
+│   ├── main.py              # Einstiegspunkt, FastAPI App + Endpoints
+│   ├── auth.py              # Authentifizierung (JWT + Passwort-Hashing)
+│   ├── database.py          # Datenbankverbindung (SQLAlchemy)
+│   ├── models.py            # Datenbankmodelle (Sensor, User, SensorValue)
+│   ├── schemas.py           # API-Daten (Request/Response Modelle)
+│   ├── mqtt_subscriber.py   # MQTT Subscriber → speichert Daten in DB
+│   ├── router_historic.py   # Endpoints für historische Sensordaten
+│   ├── requirements.txt     # Python-Abhängigkeiten
+│   └── Dockerfile           # Backend Container Setup
+
+├── frontend/                # Svelte Frontend (UI + Live Daten)
+│   ├── package.json         # NodeJS Dependencies
+│   ├── package-lock.json    # genaue Versionsauflösung
+│   ├── svelte.config.js     # Svelte Konfiguration
+│   ├── tsconfig.json        # TypeScript Einstellungen
+│   ├── vite.config.ts       # Dev Server / Build Config
+│   ├── Dockerfile           # Frontend Container Setup
+│   │
+│   └── src/
+│       ├── app.html         # HTML Einstiegspunkt
+│       ├── app.d.ts         # TypeScript Definitionen
+│       ├── global.css       # globale Styles
+│       │
+│       ├── lib/
+│       │   ├── api.ts                   # Kommunikation mit Backend API
+│       │   ├── mqttService.svelte.ts    # MQTT Verbindung + Live Daten
+│       │   │
+│       │   └── Components/
+│       │       ├── Button.svelte
+│       │       ├── Dashboard.svelte
+│       │       ├── Header.svelte
+│       │       ├── LogInView.svelte
+│       │       ├── SensorCard.svelte
+│       │       ├── SensorChart.svelte
+│       │       └── SensorInformation.svelte
+│       │
+│       └── routes/
+│           ├── +layout.svelte           # Layout der App
+│           └── +page.svelte             # Hauptseite
+
+├── mosquitto/              # MQTT Broker (Mosquitto)
+│   ├── config/
+│   │   └── mosquitto.conf  # Broker Konfiguration
+│   ├── data/
+│   │   └── mosquitto.db    # persistente MQTT Daten
+│   └── log/
+│       └── mosquitto.log   # Broker Logs
+
+├── simulation/             # Sensor-Simulation (MQTT Publisher)
+│   ├── simulator.py        # sendet Sensordaten an MQTT Broker
+│   ├── requirements.txt    # Python Dependencies für Simulator
+│   └── Dockerfile          # Container für Simulation
+
 projekt-template/
-├── backend/
-│   ├── main.py          # FastAPI-App (Endpoints)
-│   ├── auth.py          # JWT + Argon2 Passwort-Hashing
-│   ├── database.py      # SQLAlchemy Engine + Session
-│   ├── models.py        # ORM-Modelle (User + eure Tabellen)
-│   ├── schemas.py       # Pydantic-Schemas (Request/Response)
-│   ├── requirements.txt # Python-Abhängigkeiten
-│   └── Dockerfile       # Bauanleitung für Backend-Container
-├── frontend/
-│   ├── src/
-│   │   ├── lib/api.ts          # API-Hilfsfunktionen (login, fetch...)
-│   │   └── routes/+page.svelte # Startseite
-│   ├── package.json            # NodeJS-Abhängigkeiten
-│   └── Dockerfile              # Bauanleitung für Frontend-Container
-├── docker-compose.yml          # Orchestrierung aller Container
-├── .env.example                # Vorlage für Umgebungsvariablen
-└── .gitignore                  # Git-Ignore-Datei
-```
+├── .dockerignore            # Docker ignoriert diese Dateien beim Build
+├── .env                     # Umgebungsvariablen (Passwörter, Keys)
+├── .gitignore               # Dateien für Git ausschließen
+├── docker-compose.yml       # Startet alle Services (Backend, DB, MQTT, Frontend)
+├── README.md                # Projektdokumentation
+├── ToDos.md                 # Aufgaben / Planung
+
 
 ## Wo anfangen?
 
