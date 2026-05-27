@@ -1,11 +1,9 @@
+import os
 import time
 import random
 import json
 import paho.mqtt.client as mqtt
 from datetime import datetime
-
-from pydantic_core.core_schema import none_schema
-from sqlalchemy import func
 
 sensors = {
     "1": {"id": "1", "name": "Sensor 1", "type": "temperature", "value": 22, "step": 0.3, "min": 18, "max": 28, "active": True},
@@ -15,7 +13,9 @@ sensors = {
     "5": {"id": "5", "name": "Sensor 5", "type": "humidity",    "value": 45, "step": 1.0, "min": 30, "max": 70, "active": True}
 }
 
-TOPIC = "commands/+/status" 
+TOPIC = "commands/+/status"
+MQTT_HOST = os.getenv("MQTT_HOST", "localhost")
+MQTT_PORT = int(os.getenv("MQTT_PORT", "1883"))
 
 def on_connect(client, userdata, flags, rc):
     print(f"[MQTT] Connected (rc={rc})")
@@ -46,7 +46,7 @@ client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
 
-client.connect("localhost", 1883)
+client.connect(MQTT_HOST, MQTT_PORT)
 client.loop_start()
 
 for s in sensors.values():
