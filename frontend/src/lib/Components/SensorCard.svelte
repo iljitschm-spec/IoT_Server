@@ -4,12 +4,14 @@
 
 
 <li>
-    <div onclick={onclick} class="card {active === true ? 'active' : ''}">
+    <div onclick={onclick} class="card {active == true ? 'active' : ''}">
         <div class="card-body">
             <h3 class={online ===false ? 'offline' : 'online'} >
                 {sensorName}
             </h3>
-            <p>{type}: {values[values.length - 1]}</p>
+            <p>
+                {type}: {values.at(-1)?.value ?? '--'} {type === "Temperature" ? "°C" : "%"}
+            </p>
         </div>
     </div>
 </li>
