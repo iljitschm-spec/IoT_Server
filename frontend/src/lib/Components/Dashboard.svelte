@@ -68,7 +68,7 @@
         gap: 1.5rem;
         width: 100%;
         margin: 0 auto;
-        height: 80vh;
+        height: 82vh;
     }
 
     .content{
