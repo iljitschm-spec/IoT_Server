@@ -6,11 +6,11 @@ import paho.mqtt.client as mqtt
 from datetime import datetime
 
 sensors = {
-    "1": {"id": "1", "name": "Sensor 1", "type": "temperature", "value": 22, "step": 0.3, "min": 18, "max": 28, "active": True},
-    "2": {"id": "2", "name": "Sensor 2", "type": "temperature", "value": 24, "step": 0.3, "min": 18, "max": 30, "active": True},
-    "3": {"id": "3", "name": "Sensor 3", "type": "humidity",    "value": 60, "step": 1.0, "min": 40, "max": 80, "active": True},
-    "4": {"id": "4", "name": "Sensor 4", "type": "temperature", "value": 20, "step": 0.3, "min": 16, "max": 26, "active": True},
-    "5": {"id": "5", "name": "Sensor 5", "type": "humidity",    "value": 45, "step": 1.0, "min": 30, "max": 70, "active": True}
+    "1": {"id": "1", "name": "Sensor 1", "type": "temperature", "value": 22, "step": 0.3, "min": 21, "max": 23, "active": True, "alert": False},
+    "2": {"id": "2", "name": "Sensor 2", "type": "temperature", "value": 24, "step": 0.3, "min": 18, "max": 30, "active": True, "alert": False},
+    "3": {"id": "3", "name": "Sensor 3", "type": "humidity",    "value": 60, "step": 1.0, "min": 40, "max": 80, "active": True, "alert": False},
+    "4": {"id": "4", "name": "Sensor 4", "type": "temperature", "value": 20, "step": 0.3, "min": 16, "max": 26, "active": True, "alert": False},
+    "5": {"id": "5", "name": "Sensor 5", "type": "humidity",    "value": 45, "step": 1.0, "min": 30, "max": 70, "active": True, "alert": False}
 }
 
 TOPIC = "commands/+/status"
@@ -58,16 +58,21 @@ print("Simulator läuft.")
 while True:
     for sensor_id, v in sensors.items():
         if not v["active"]:
-            payload = payload = json.dumps({
+            payload = json.dumps({
                 "name": v["name"],
                 "value": None,
-                "timestamp": None
+                "timestamp": None,
+                "alert": False
             })
             client.publish(f"sensors/{v['id']}/{v['type']}", payload)
             continue
         
         v["value"] += random.uniform(-v["step"], v["step"])
         v["value"] = max(v["min"], min(v["max"], v["value"]))
+
+        is_alert = (v["value"] <= (v["min"] + v["step"])) or (v["value"] >= (v["max"] - v["step"]))
+
+        client.publish(f"alerts/{v['id']}", "true" if is_alert else "false")
         
         payload = json.dumps({
             "name": v["name"],

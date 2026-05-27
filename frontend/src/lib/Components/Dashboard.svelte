@@ -3,9 +3,11 @@
     import SensorInformation from "./SensorInformation.svelte";
     import { connectMqtt, disconnectMqtt, mqttData } from "../mqttService.svelte.ts";
     import {onMount, onDestroy} from "svelte";
-    
-    let sensor_list = $derived(Object.values(mqttData.sensors));
 
+    let sensor_list = $derived(
+        Object.values(mqttData.sensors).filter(s => (Date.now() - s.lastSeen) < 2000)
+    );
+    let now = $state(Date.now());
     let usedSensor = $derived(sensor_list.find(sensor => sensor.id === selectedId) || sensor_list[0])
 
     let selectedId: number = $state<number>(0);
@@ -22,8 +24,10 @@
     });
 
     onMount(() => {
-        connectMqtt("ws://localhost:9001", "sensors/#");
+        connectMqtt();
         console.log("Connected");
+        const interval = setInterval(() => { now = Date.now(); }, 1000);
+        return () => clearInterval(interval);
     })
 
     onDestroy(() => {
@@ -40,7 +44,8 @@
                         type={sensor.type} 
                         onclick={() => handleCardClick(sensor)} 
                         online={sensor.online}
-                        active={sensor.id === usedSensor.id}
+                        isActiveSensor={sensor.id === usedSensor.id}
+                        alert={sensor.alert}
             />
         {/each}
     </ul>
@@ -53,7 +58,6 @@
             </div>
         {/if}
     </div>
-
 </div>
 
 
