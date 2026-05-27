@@ -49,6 +49,26 @@ def get_aggregated_data(db: Session, sensor_id: int, since: datetime, until: dat
         for row in rows
     ]
 
+@router.get("/{sensor_id}/historic/hour", response_model=SensorHistoricResponse)
+def historic_hour(sensor_id: int, db: Session = Depends(get_db)):
+    sensor = get_sensor(sensor_id, db)
+    now = datetime.now()
+
+    data = get_aggregated_data(
+        db,
+        sensor_id,
+        since=now - timedelta(hours=1),
+        until=now,
+        time_format="%Y-%m-%dT%H:%i:00",  
+    )
+
+    return SensorHistoricResponse(
+        sensor_id=sensor.id,
+        sensor_name=sensor.name,
+        range="hour",
+        data=data,
+    )
+
 
 # Last 24 hours – one point per hour
 @router.get("/{sensor_id}/historic/day", response_model=SensorHistoricResponse)

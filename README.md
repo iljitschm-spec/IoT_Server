@@ -61,3 +61,13 @@ Die Swagger UI unter `http://localhost:8000/docs` hat einen eingebauten **Author
 1. Benutzer anlegen: `POST /auth/register`
 2. Einloggen: Authorize-Button klicken → username + password eingeben
 3. Geschützte Endpoints wie `GET /my-profile` aufrufen
+
+
+## Nützliche Commands:
+
+Um die Datenbank manuell auszulesen ist folgender befehl hilfreich:
+`docker compose exec -it db mysql -uroot -p myapp`
+
+Zum mithören auf dem Broker:
+`docker compose exec mosquitto mosquitto_sub -t "sensors/#" -v`
+
