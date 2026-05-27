@@ -71,3 +71,6 @@ Um die Datenbank manuell auszulesen ist folgender befehl hilfreich:
 Zum mithören auf dem Broker:
 `docker compose exec mosquitto mosquitto_sub -t "sensors/#" -v`
 
+Für die logs:
+`docker compose logs backend --tail=200`
+
