@@ -8,12 +8,11 @@
         Object.values(mqttData.sensors).filter(s => (Date.now() - s.lastSeen) < 2000)
     );
     let now = $state(Date.now());
-    let usedSensor = $derived(sensor_list.find(sensor => sensor.id === selectedId) || sensor_list[0])
-
     let selectedId: number = $state<number>(0);
-
+    let usedSensor = $derived(sensor_list.find(sensor => sensor.id === selectedId) || sensor_list[0])
+    
     function handleCardClick(sensor: any) {
-        usedSensor = sensor;
+        selectedId = sensor.id;
         console.log(sensor.data)
     }
 
