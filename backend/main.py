@@ -22,10 +22,13 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Mein Projekt", version="0.1.0")
 app.include_router(historic_router)
+from mqtt_subscriber import start_mqtt
+mqtt_client = None
+@app.on_event("startup")
+def _startup():
+    global mqtt_client 
+    mqtt_client = start_mqtt()
 
-async def lifespan(app: FastAPI):
-    start_mqtt()
-    yield
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[

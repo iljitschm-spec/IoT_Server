@@ -18,10 +18,15 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, msg):
 
-    topic = msg.topic                       
+    print("[MQTT] message", msg.topic, msg.payload.decode("utf-8")[:200])
+
+    topic = msg.topic
     parts = topic.split("/")
 
-    sensor_id_str = parts[1]
+    if len(parts) != 3 or parts[0] != "sensors":
+        return
+
+    _, sensor_id_str, measurement_type = parts
 
     try:
         sensor_id = int(sensor_id_str)
