@@ -9,13 +9,13 @@
 
 <div class="content-wrapper">
     <h2>
-        {activeSensor.name}
+        {`Sensor ${activeSensor.id}`}
         <span style="color: {activeSensor.online === true ? 'var(--green)' : 'var(--red)'}">●</span>
     </h2>
     <button class="toggle-btn" onclick={toggleSensor}>
-        {activeSensor.online ? 'Ausschalten' : 'Einschalten'}
+        {activeSensor.online === true ? 'Ausschalten' : 'Einschalten'}
     </button>
-    <p>Status: 
+    <p>Status:
         <span style="color: {activeSensor.online === true ? 'var(--green)' : 'var(--red)'}">
             {activeSensor.online === true ? 'Online' : 'Offline'}
         </span>

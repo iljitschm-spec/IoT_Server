@@ -4,6 +4,9 @@ import json
 import paho.mqtt.client as mqtt
 from datetime import datetime
 
+from pydantic_core.core_schema import none_schema
+from sqlalchemy import func
+
 sensors = {
     "1": {"id": "1", "name": "Sensor 1", "type": "temperature", "value": 22, "step": 0.3, "min": 18, "max": 28, "active": True},
     "2": {"id": "2", "name": "Sensor 2", "type": "temperature", "value": 24, "step": 0.3, "min": 18, "max": 30, "active": True},
@@ -36,8 +39,8 @@ def on_message(client, userdata, msg):
     
     sensors[sensor_id]["active"] = active
     print(f"-> Sensor {sensor_id} ist jetzt {'aktiv' if active else 'inaktiv'}")
-    
-    client.publish(f"sensors/{sensor_id}/status", "online" if active else "offline")
+
+    client.publish(f"sensors/{sensor_id}/status", "online" if active else "offline", retain=True)
 
 client = mqtt.Client()
 client.on_connect = on_connect
@@ -47,19 +50,27 @@ client.connect("localhost", 1883)
 client.loop_start()
 
 for s in sensors.values():
-    client.publish(f"sensors/{s['id']}/status", "online")
+    is_online = "online" if s["active"] else "offline"
+    client.publish(f"sensors/{s['id']}/status", is_online, retain=True)
 
 print("Simulator läuft.")
 
 while True:
     for sensor_id, v in sensors.items():
         if not v["active"]:
+            payload = payload = json.dumps({
+                "name": v["name"],
+                "value": None,
+                "timestamp": None
+            })
+            client.publish(f"sensors/{v['id']}/{v['type']}", payload)
             continue
         
         v["value"] += random.uniform(-v["step"], v["step"])
         v["value"] = max(v["min"], min(v["max"], v["value"]))
         
         payload = json.dumps({
+            "name": v["name"],
             "value": round(v["value"], 1),
             "timestamp": datetime.now().isoformat()
         })
