@@ -68,6 +68,6 @@ class DataPoint(BaseModel):
 class SensorHistoricResponse(BaseModel):
     sensor_id: int
     sensor_name: str
-    range: Literal["day", "month", "year"]
+    range: Literal["hour", "day", "month", "year"]
     data: list[DataPoint]
 
