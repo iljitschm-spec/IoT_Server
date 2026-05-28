@@ -1,7 +1,7 @@
 <script>
-    let { name, onclick_function} = $props();
+    let { name, onclick_function, active_condition} = $props();
 </script>
-    <button onclick={onclick_function} type="button">
+    <button onclick={onclick_function} type="button" class="{active_condition ? 'active' : ''}">
         {name}
     </button>
 
@@ -17,6 +17,10 @@
         width: fit-content;
     }
     button:hover {
+        background-color: var(--accent);
+    }
+
+    .active {
         background-color: var(--accent);
     }
 

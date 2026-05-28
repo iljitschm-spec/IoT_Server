@@ -13,7 +13,7 @@
         {`Sensor ${activeSensor.id}`}
         <span style="color: {activeSensor.online === true ? 'var(--green)' : 'var(--red)'}">● {activeSensor.online === true ? 'Online' : 'Offline'}</span>
     </h2>
-    <ActionButton name={activeSensor.online === true ? 'Ausschalten' : 'Einschalten'} onclick_function={toggleSensor} />
+    <ActionButton name={activeSensor.online === true ? 'Ausschalten' : 'Einschalten'} onclick_function={toggleSensor} active_condition={false} />
     <div class="chart-wrapper">
         <SensorChart {activeSensor} />
     </div>
