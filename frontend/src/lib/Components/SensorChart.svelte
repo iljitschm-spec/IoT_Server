@@ -2,12 +2,13 @@
     import { onMount, onDestroy } from 'svelte';
     import { Chart } from 'chart.js/auto';
     import { fetchPublic } from '$lib/api';
+    import ActionButton from './ActionButton.svelte';
 
     let { activeSensor } = $props();
     let canvasElement: HTMLCanvasElement;
     let chartInstance: Chart | null = null;
 
-    let horizon = $state("hour"); // Bleibt englisch für die API
+    let horizon = $state("hour");
 
     function changeHorizon(h: string) {
         horizon = h;
@@ -61,6 +62,7 @@
     }
 
     onMount(() => {
+        loadHistoricData(activeSensor);
         chartInstance = new Chart(canvasElement, {
             type: 'line',
             data: {
@@ -84,7 +86,7 @@
             }
     }});
 
-        loadHistoricData(activeSensor);
+        
     });
 
     onDestroy(() => {
@@ -99,10 +101,10 @@
 </script>
 
 <div class="button_wrapper">
-    <button class="toggle-btn" class:active={horizon === 'hour'} onclick={() => changeHorizon("hour")}>Stunde</button>
-    <button class="toggle-btn" class:active={horizon === 'day'} onclick={() => changeHorizon("day")}>Tag</button>
-    <button class="toggle-btn" class:active={horizon === 'month'} onclick={() => changeHorizon("month")}>Monat</button>
-    <button class="toggle-btn" class:active={horizon === 'year'} onclick={() => changeHorizon("year")}>Jahr</button>
+    <ActionButton name="Stunde" onclick_function={() => changeHorizon("hour")} />
+    <ActionButton name="Tag" onclick_function={() => changeHorizon("day")} />
+    <ActionButton name="Monat" onclick_function={() => changeHorizon("month")} />
+    <ActionButton name="Jahr" onclick_function={() => changeHorizon("year")} />
 </div>
 
 <div class="chart-container">
@@ -124,20 +126,5 @@
         width: 100%;
         height: 95%;
         min-height: 300px;
-    }
-
-    .toggle-btn {
-        padding: 0.5rem 1rem;
-        background-color: var(--cards);
-        border: 1px solid var(--border);
-        color: inherit;
-        border-radius: 0.5rem;
-        cursor: pointer;
-        transition: all 0.2s;
-        width: fit-content;
-    }
-    .toggle-btn:hover, .toggle-btn.active {
-        background-color: var(--accent);
-        border-color: var(--accent);
     }
 </style>

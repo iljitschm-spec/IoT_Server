@@ -1,7 +1,7 @@
 <script>
     let { name, onclick_function} = $props();
 </script>
-    <button onclick={onclick_function}>
+    <button onclick={onclick_function} type="button">
         {name}
     </button>
 
