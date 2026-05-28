@@ -38,12 +38,11 @@
 
 <header>
     <h1>IOT - Sensor Dashboard</h1>
-    <Button name={buttonName} onclick_function={handleHeaderClick} type={"button"} />
     <div class="actions">
         <button class="theme-toggle" onclick={toggleTheme} aria-label="Theme wechseln">
             {isDark ? "☀️" : "🌒"}
         </button>
-        <Button name={buttonName} onclick_function={handleHeaderClick} />
+        <Button name={buttonName} onclick_function={handleHeaderClick} type={"button"} />
     </div>
 </header>
 
