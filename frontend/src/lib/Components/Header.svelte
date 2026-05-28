@@ -38,6 +38,7 @@
 
 <header>
     <h1>IOT - Sensor Dashboard</h1>
+    <Button name={buttonName} onclick_function={handleHeaderClick} type={"button"} />
     <div class="actions">
         <button class="theme-toggle" onclick={toggleTheme} aria-label="Theme wechseln">
             {isDark ? "☀️" : "🌒"}
@@ -53,19 +54,18 @@
         justify-content: space-between;
         background-color: var(--cards);
         border: 1px solid var(--border);
-        border-radius: 0.5rem;
-        padding: 0.5rem;
-        margin: 0 auto;
+        border-radius: 1rem;
+        padding: 1rem;
+        margin: 0;
         box-sizing: border-box;
-        color: var(--text-primary);
+        width: 100%;
     }
+
     h1 {
         color: var(--text-primary);
-        font-size: 2rem;
-        text-align: center;
+        font-size: 1.5rem;
         font-weight: bold;
-        margin: auto;
-        padding: 0.5rem;
+        margin: 0;
     }
     .actions {
         display: flex;

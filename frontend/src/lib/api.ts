@@ -45,7 +45,7 @@ export async function login(username: string, password: string) {
 
 	if (!res.ok) {
 		if (res.status === 401 || res.status === 422) {
-			throw new Error("Benutzername oder Passwort ist falsch.");
+			throw new Error("Benutzername oder Passwort falsch.");
 		}  else if (res.status >= 500) {
 			throw new Error(`Serverfehler (${res.status}): Bitte versuche es später erneut.`);
 		} else {

@@ -1,7 +1,7 @@
 <script>
-    let { name, onclick_function} = $props();
+    let { name, onclick_function, type} = $props();
 </script>
-    <button onclick={onclick_function} type="button">
+    <button onclick={onclick_function} type={type}>
         {name}
     </button>
 

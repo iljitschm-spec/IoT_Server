@@ -112,8 +112,12 @@
             <Button
                     name={userIsLoggingIn ? "Log In" : "Registrieren"}
                     onclick_function={handleSubmit}
+                    type={"submit"}
             />
-            <Button name="Schließen" type="button" onclick_function={closeDialog} />
+            <Button name="Schließen"
+                    onclick_function={closeDialog}
+                    type={"button"}
+            />
         </div>
         
         <button type="button" class="toggle-text" onclick={toggleMode}>
