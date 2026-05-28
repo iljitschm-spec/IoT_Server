@@ -101,10 +101,10 @@
 </script>
 
 <div class="button_wrapper">
-    <ActionButton name="Stunde" onclick_function={() => changeHorizon("hour")} />
-    <ActionButton name="Tag" onclick_function={() => changeHorizon("day")} />
-    <ActionButton name="Monat" onclick_function={() => changeHorizon("month")} />
-    <ActionButton name="Jahr" onclick_function={() => changeHorizon("year")} />
+    <ActionButton name="Stunde" onclick_function={() => changeHorizon("hour")} active_condition={horizon === "hour"} />
+    <ActionButton name="Tag" onclick_function={() => changeHorizon("day")} active_condition={horizon === "day"} />
+    <ActionButton name="Monat" onclick_function={() => changeHorizon("month")} active_condition={horizon === "month"} />
+    <ActionButton name="Jahr" onclick_function={() => changeHorizon("year")} active_condition={horizon === "year"} />
 </div>
 
 <div class="chart-container">
