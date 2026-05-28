@@ -5,7 +5,7 @@
     import {onMount, onDestroy} from "svelte";
 
     let sensor_list = $derived(
-        Object.values(mqttData.sensors).filter(s => (Date.now() - s.lastSeen) < 2000)
+        Object.values(mqttData.sensors).filter(s => s.online === false || (Date.now() - s.lastSeen) < 2000)
     );
     let now = $state(Date.now());
     let selectedId: number = $state<number>(0);

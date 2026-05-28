@@ -9,7 +9,8 @@
     let username = $state("");
     let password = $state("");
     let email = $state("");
-
+    
+    let errorMessage = $state(""); 
     let isLoading = $state(false);
 
     $effect(() => {
@@ -17,6 +18,8 @@
             if (!isLoading) {
                 username = "";
                 password = "";
+                email = "";
+                errorMessage = ""; 
             }
             dialog.showModal();
         } else if (!showLogIn && dialog && dialog.open) {
@@ -28,21 +31,26 @@
         if (e) e.preventDefault();
 
         isLoading = true;
+        errorMessage = "";
+
+        if (!username || !password || (!userIsLoggingIn && !email)) {
+            errorMessage = "Bitte fülle alle erforderlichen Felder aus.";
+            isLoading = false;
+            return;
+        }
 
         if (userIsLoggingIn) {
-            // --- LOGIN ---
             try {
                 await login(username, password);
                 loggedIn = true;
                 showLogIn = false;
                 userIsLoggingIn = true;
             } catch (error: any) {
-                alert(error.message || "Login fehlgeschlagen. Bitte überprüfe deine Daten.");
+                errorMessage = error.message || "Login fehlgeschlagen. Bitte überprüfe deine Daten.";
             } finally {
                 isLoading = false;
             }
         } else {
-            // --- REGISTRIEREN ---
             try {
                 await register(username, email, password);
                 await login(username, password);
@@ -52,7 +60,7 @@
                 userIsLoggingIn = true;
 
             } catch (error: any) {
-                alert(error.message || "Registrierung fehlgeschlagen. Möglicherweise ist der Benutzername bereits vergeben.");
+                errorMessage = error.message || "Registrierung fehlgeschlagen. Möglicherweise ist der Benutzername bereits vergeben.";
             } finally {
                 isLoading = false;
             }
@@ -67,6 +75,7 @@
 
     function toggleMode() {
         userIsLoggingIn = !userIsLoggingIn;
+        errorMessage = "";
     }
 
 </script>
@@ -84,21 +93,30 @@
 
         <label for="username">Benutzername:</label>
         <input type="text" id="username" name="username" bind:value={username} />
+        
         {#if !userIsLoggingIn}
             <label for="email">E-Mail:</label>
             <input type="email" id="email" name="email" bind:value={email} disabled={isLoading} required />
         {/if}
+        
         <label for="password">Passwort:</label>
         <input type="password" id="password" name="password" bind:value={password} />
+        
+        {#if errorMessage}
+            <p class="error-message">{errorMessage}</p>
+        {/if}
+        
         <br>
+        
         <div class="logInButton">
             <Button
                     name={userIsLoggingIn ? "Log In" : "Registrieren"}
                     onclick_function={handleSubmit}
             />
-            <Button name="Schließen" onclick_function={closeDialog} />
+            <Button name="Schließen" type="button" onclick_function={closeDialog} />
         </div>
-        <button class="toggle-text" onclick={toggleMode}>
+        
+        <button type="button" class="toggle-text" onclick={toggleMode}>
             {userIsLoggingIn ? "Noch kein Account? Registrieren" : "Bereits einen Account? Einloggen"}
         </button>
     </form>
@@ -151,5 +169,14 @@
 
     .toggle-text:hover {
         text-decoration: underline;
+    }
+
+    .error-message {
+        color: var(--red);
+        font-size: 0.85rem;
+        text-align: center;
+        margin: 0.5rem 0 0 0;
+        max-width: 220px;
+        line-height: 1.2;
     }
 </style>

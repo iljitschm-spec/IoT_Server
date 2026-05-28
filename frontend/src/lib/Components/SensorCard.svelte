@@ -6,16 +6,16 @@
 <li>
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
-    <div onclick={onclick} class="card {isActiveSensor == true ? 'active' : ''}">
+    <button onclick={onclick} class="card {isActiveSensor == true ? 'active' : ''}">
         <div class="card-body">
             <h3 class={online ===false ? 'offline' : 'online'} style="color: {alert == true && online == true ? 'var(--warning)' : ''}" >
                 {sensorName}
             </h3>
             <p>
-                {type}: {values?.value ?? '--'} {type === "Temperature" ? "°C" : "%"}
+                {type === "Temperature" ? "Temperatur" : "Luftfeuchtigkeit"}: {online === false ? "--" : values?.value} {type === "Temperature" ? "°C" : "%"}
             </p>
         </div>
-    </div>
+    </button>
 </li>
 
 <style>

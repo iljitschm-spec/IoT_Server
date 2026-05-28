@@ -58,13 +58,13 @@ print("Simulator läuft.")
 while True:
     for sensor_id, v in sensors.items():
         if not v["active"]:
-            payload = json.dumps({
-                "name": v["name"],
-                "value": None,
-                "timestamp": None,
-                "alert": False
-            })
-            client.publish(f"sensors/{v['id']}/{v['type']}", payload)
+            #payload = json.dumps({
+            #    "name": v["name"],
+            #    "value": None,
+            #    "timestamp": None,
+            #    "alert": False
+            #})
+            #client.publish(f"sensors/{v['id']}/{v['type']}", payload)
             continue
         
         v["value"] += random.uniform(-v["step"], v["step"])
