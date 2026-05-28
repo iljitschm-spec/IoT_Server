@@ -17,6 +17,30 @@
         --warning: #F59E0B;
         font-family: "Roboto", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     }
+
+    :global([data-theme="light"]) {
+        --background: #F1F5F9;
+        --cards: #FFFFFF;
+
+        --text-primary: #0F172A;
+        --text-secondary: #475569;
+
+        --accent: #0284C7;
+        --hover: #0369A1;
+        --click: #075985;
+
+        --border: #CBD5E1;
+        --red: #DC2626;
+        --green: #059669;
+        --warning: #D97706;
+    }
+
+    :global(body) {
+        background-color: var(--background);
+        color: var(--text-primary);
+        transition: background-color 0.3s ease, color 0.3s ease;
+        margin: 0;
+    }
 </style>
 
 <slot />

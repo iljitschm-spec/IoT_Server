@@ -7,7 +7,7 @@
 
 <style>
     button {
-        color: var(--color-text);
+        color: var(--text-primary);
         font-weight: bold;
         display: inline-block;
         text-align: center;
