@@ -22,7 +22,6 @@
 
 <div class="main">
 	<Header bind:loggedIn bind:showLogIn />
-	<br>
 	<div class="container">
 		{#if isAppLoading}
 			<div class="loading-state">
@@ -39,17 +38,23 @@
 
 <style>
 	.main {
+		max-width: 100%;
+		max-height: 100%;
+		width: 100%;
 		margin: 0 auto;
 		box-sizing: border-box;
 		padding: 1rem;
 		color: var(--text-primary);
+
+		display: flex;
+		flex-direction: column;
+		gap: 1.2rem;
 	}
 
 	.container {
 		display: flex;
 		flex-direction: column;
-		flex-wrap: wrap;
-
+		width: 100%;
 	}
 
 	.notLoggedIn {

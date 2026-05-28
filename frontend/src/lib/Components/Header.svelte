@@ -18,28 +18,27 @@
 
 <header>
     <h1>IOT - Sensor Dashboard</h1>
-    <Button name={buttonName} onclick_function={handleHeaderClick} />
+    <Button name={buttonName} onclick_function={handleHeaderClick} type={"button"} />
 </header>
 
 <style>
     header {
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: space-between;
         background-color: var(--cards);
         border: 1px solid var(--border);
-        border-radius: 0.5rem;
-        padding: 0.5rem;
-        margin: 0 auto;
+        border-radius: 1rem;
+        padding: 1rem;
+        margin: 0;
         box-sizing: border-box;
-        color: var(--text-primary);
+        width: 100%;
     }
+
     h1 {
         color: var(--text-primary);
-        font-size: 2rem;
-        text-align: center;
+        font-size: 1.5rem;
         font-weight: bold;
-        margin: auto;
-        padding: 0.5rem;
+        margin: 0;
     }
 </style>

@@ -15,7 +15,7 @@
         loadHistoricData(activeSensor);
     }
 
-    async function loadHistoricData(sensor) {
+    async function loadHistoricData(sensor: any) {
         if (!chartInstance) return;
 
         try {
@@ -77,9 +77,9 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false, 
-                scales: {
+                /*scales: {
                     x: { boundaryGap: false }
-                },
+                },*/
             plugins: {
                 legend: {
                     display: false },

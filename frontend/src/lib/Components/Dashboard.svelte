@@ -65,10 +65,10 @@
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        gap: 1.5rem;
+        gap: 1rem;
         width: 100%;
-        margin: 0 auto;
-        height: 82vh;
+        margin: 0;
+        height: 80vh;
     }
 
     .content{
@@ -79,6 +79,7 @@
         border-radius: 1rem;
         flex-grow: 1;
         padding: 1rem;
+        min-width: 0;
     }
 
     .sensor-list {
@@ -87,11 +88,12 @@
         padding: 0;
         display: flex;
         flex-direction: column;
-        align-items: center;
+        align-items: stretch;
         gap: 1rem;
         height: 100%;
         overflow-y: auto;
         overflow-x: hidden;
+        flex: 0 0 207px;
     }
 
     * {
