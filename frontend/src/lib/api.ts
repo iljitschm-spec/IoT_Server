@@ -1,31 +1,22 @@
 /** Basis-URL des FastAPI-Backends */
 const API_BASE = 'http://localhost:8000';
 
-/** Hilfsfunktion: gibt den gespeicherten JWT zurück (oder null) */
 function getToken(): string | null {
 	return localStorage.getItem('token');
 }
 
-/** Hilfsfunktion: speichert den JWT im localStorage */
 function saveToken(token: string): void {
 	localStorage.setItem('token', token);
 }
 
-/** Hilfsfunktion: löscht den JWT (Logout) */
 export function logout(): void {
 	localStorage.removeItem('token');
 }
 
-/** Gibt true zurück, wenn ein Token gespeichert ist */
 export function isLoggedIn(): boolean {
 	return getToken() !== null;
 }
 
-/**
- * Login via OAuth2 Password Flow.
- * Sendet username + password als Formular-Daten (nicht JSON!) an POST /token.
- * Speichert den erhaltenen access_token im localStorage.
- */
 export async function login(username: string, password: string) {
 	const formData = new URLSearchParams();
 	formData.append('username', username);
@@ -57,41 +48,6 @@ export async function login(username: string, password: string) {
 	saveToken(data.access_token);
 }
 
-/**
- * Führt einen authentifizierten GET-Request aus.
- * Hängt den Bearer-Token aus dem localStorage als Authorization-Header an.
- */
-export async function fetchProtected<T>(path: string): Promise<T> {
-	const token = getToken();
-
-	if (!token) {
-		logout();
-		throw new Error('Nicht authentifiziert. Kein Token gefunden.');
-	}
-
-	const res = await fetch(`${API_BASE}${path}`, {
-		method: 'GET',
-		headers: {
-			'Authorization': `Bearer ${token}`,
-			'Content-Type': 'application/json'
-		}
-	});
-
-	if (res.status === 401) {
-		logout();
-		throw new Error('Sitzung abgelaufen oder ungültig. Bitte logge dich erneut ein.');
-	}
-
-	if (!res.ok) {
-		throw new Error(`HTTP Fehler: ${res.status}`);
-	}
-
-	return (await res.json()) as T;
-}
-
-/**
- * Führt einen nicht authentifizierten GET-Request aus.
- */
 export async function fetchPublic<T>(path: string): Promise<T> {
 	const res = await fetch(`${API_BASE}${path}`, {
 		method: 'GET',

@@ -2,7 +2,6 @@ from datetime import datetime
 from pydantic import BaseModel
 from typing import Literal
 
-# --- Auth-Schemas ---
 
 class UserRegister(BaseModel):
     username: str
@@ -21,18 +20,6 @@ class UserResponse(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
-
-
-# TODO: Fügt hier eure eigenen Schemas hinzu
-# class ItemCreate(BaseModel):
-#     name: str
-#     price: int
-#
-# class ItemResponse(BaseModel):
-#     id: int
-#     name: str
-#     price: int
-#     model_config = {"from_attributes": True}
 
 class SensorCreate(BaseModel):
     name: str
