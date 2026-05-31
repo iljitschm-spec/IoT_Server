@@ -1,7 +1,4 @@
-# router_historic.py
-# Include in main.py:
-#   from router_historic import router as historic_router
-#   app.include_router(historic_router)
+
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -70,7 +67,7 @@ def historic_hour(sensor_id: int, db: Session = Depends(get_db)):
     )
 
 
-# Last 24 hours – one point per hour
+
 @router.get("/{sensor_id}/historic/day", response_model=SensorHistoricResponse)
 def historic_day(sensor_id: int, db: Session = Depends(get_db)):
     sensor = get_sensor(sensor_id, db)
@@ -79,7 +76,6 @@ def historic_day(sensor_id: int, db: Session = Depends(get_db)):
     return SensorHistoricResponse(sensor_id=sensor.id, sensor_name=sensor.name, range="day", data=data)
 
 
-# Last 30 days – one point per day
 @router.get("/{sensor_id}/historic/month", response_model=SensorHistoricResponse)
 def historic_month(sensor_id: int, db: Session = Depends(get_db)):
     sensor = get_sensor(sensor_id, db)
@@ -88,7 +84,6 @@ def historic_month(sensor_id: int, db: Session = Depends(get_db)):
     return SensorHistoricResponse(sensor_id=sensor.id, sensor_name=sensor.name, range="month", data=data)
 
 
-# Last 12 months – one point per month
 @router.get("/{sensor_id}/historic/year", response_model=SensorHistoricResponse)
 def historic_year(sensor_id: int, db: Session = Depends(get_db)):
     sensor = get_sensor(sensor_id, db)

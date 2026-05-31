@@ -22,7 +22,6 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Mein Projekt", version="0.1.0")
 app.include_router(historic_router)
-from mqtt_subscriber import start_mqtt
 mqtt_client = None
 @app.on_event("startup")
 def _startup():
@@ -108,7 +107,7 @@ def login(
         "token_type": "bearer",
     }
 
-
+#Evtl. Streichen
 @app.get("/my-profile", response_model=UserResponse)
 def get_profile(
     current_username: Annotated[str, Depends(get_current_user)],
@@ -125,27 +124,10 @@ def get_profile(
     return user
 
 
-# ---------------------------------------------------------------------------
-# TODO: Eure eigenen Endpoints hier einfügen
-# ---------------------------------------------------------------------------
-
-# Beispiel:
-# @app.get("/items")
-# def get_items(db: Session = Depends(get_db)):
-#     return db.query(Item).all()
-#
-# @app.post("/items", status_code=201)
-# def create_item(data: ItemCreate, db: Session = Depends(get_db)):
-#     item = Item(**data.model_dump())
-#     db.add(item)
-#     db.commit()
-#     db.refresh(item)
-#     return item
 
 @app.get("/sensors", response_model=list[SensorResponse])
 def get_sensors(db: Session = Depends(get_db)):
     return db.query(models.Sensor).all()
-
 
 
 @app.post("/sensors", response_model=SensorResponse)
@@ -174,7 +156,3 @@ def get_sensor_values(sensor_id: int, db: Session = Depends(get_db)):
              .all()
 
 
-
-@app.post("/sensor/{sensor_id}/status?{}")
-def change_stauts():
-    pass
