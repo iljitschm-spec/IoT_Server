@@ -14,15 +14,6 @@ class User(Base):
     email = Column(String(200), unique=True, nullable=False)
     hashed_password = Column(String(200), nullable=False)
 
-
-# TODO: Fügt hier eure eigenen Modelle hinzu
-# class Item(Base):
-#     __tablename__ = "items"
-#     id    = Column(Integer, primary_key=True, index=True)
-#     name  = Column(String(100), nullable=False)
-#     ...
-
-#Sensoren Klasse
 class Sensor(Base):
     __tablename__ = "sensors"
 
@@ -30,10 +21,8 @@ class Sensor(Base):
     name = Column(String(100), nullable=False)
     type = Column(String(50), nullable=False)
 
-    # Beziehung: ein Sensor hat viele Werte
     values = relationship("SensorValue", back_populates="sensor")
 
-#Sensoren Werte Klasse
 class SensorValue(Base):
     __tablename__ = "sensor_values"
 
@@ -42,5 +31,4 @@ class SensorValue(Base):
     value = Column(Float, nullable=False)
     timestamp = Column(DateTime, default=datetime.now)
 
-    # Beziehung zurück zum Sensor
     sensor = relationship("Sensor", back_populates="values")

@@ -92,7 +92,6 @@ def login(
         models.User.username == form_data.username
     ).first()
 
-    # Timing Schutz
     if not user:
         verify_password(form_data.password, DUMMY_HASH)
 
@@ -123,24 +122,6 @@ def get_profile(
         raise HTTPException(status_code=404, detail="User nicht gefunden")
 
     return user
-
-
-# ---------------------------------------------------------------------------
-# TODO: Eure eigenen Endpoints hier einfügen
-# ---------------------------------------------------------------------------
-
-# Beispiel:
-# @app.get("/items")
-# def get_items(db: Session = Depends(get_db)):
-#     return db.query(Item).all()
-#
-# @app.post("/items", status_code=201)
-# def create_item(data: ItemCreate, db: Session = Depends(get_db)):
-#     item = Item(**data.model_dump())
-#     db.add(item)
-#     db.commit()
-#     db.refresh(item)
-#     return item
 
 @app.get("/sensors", response_model=list[SensorResponse])
 def get_sensors(db: Session = Depends(get_db)):
@@ -173,8 +154,3 @@ def get_sensor_values(sensor_id: int, db: Session = Depends(get_db)):
              .filter(models.SensorValue.sensor_id == sensor_id)\
              .all()
 
-
-
-@app.post("/sensor/{sensor_id}/status?{}")
-def change_stauts():
-    pass
